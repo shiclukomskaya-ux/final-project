@@ -1,6 +1,7 @@
 package main
 
 import (
+	"final-project/internal/database"
 	"fmt"
 	"net/http"
 	"os"
@@ -14,7 +15,7 @@ func main() {
 	}
 	rootPath := filepath.Dir(execPath)
 	webPath := filepath.Join(rootPath, "web")
-	//dbPath := filepath.Join(rootPath, "scheduler.db")
+	dbPath := filepath.Join(rootPath, "scheduler.db")
 	if _, err := os.Stat(webPath); os.IsNotExist(err) {
 		webPath = "web"
 	}
@@ -23,6 +24,11 @@ func main() {
 		port = "7540"
 	}
 	address := fmt.Sprintf(":%s", port)
+
+	err = database.Init(dbPath)
+	if err != nil {
+		panic(err)
+	}
 
 	http.Handle("/", http.FileServer(http.Dir(webPath)))
 	http.ListenAndServe(address, nil)
