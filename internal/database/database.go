@@ -2,8 +2,9 @@ package database
 
 import (
 	"database/sql"
-	_ "modernc.org/sqlite"
 	"os"
+
+	_ "modernc.org/sqlite"
 )
 
 const schema = `
@@ -21,13 +22,12 @@ CREATE INDEX IF NOT EXISTS idx_date ON scheduler (date);
 var DB *sql.DB
 
 func Init(dbFile string) error {
-	_, errStat := os.Stat(dbFile)
+	_, err := os.Stat(dbFile)
 	var install bool
-	if errStat != nil {
+	if err != nil {
 		install = true
 	}
 
-	var err error
 	DB, err = sql.Open("sqlite", dbFile)
 	if err != nil {
 		return err

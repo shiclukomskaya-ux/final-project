@@ -16,18 +16,15 @@ func main() {
 	rootPath := filepath.Dir(execPath)
 	webPath := filepath.Join(rootPath, "web")
 	dbPath := filepath.Join(rootPath, "scheduler.db")
-	if _, err := os.Stat(webPath); os.IsNotExist(err) {
-		webPath = "web"
-	}
+
 	port := os.Getenv("TODO_PORT")
 	if port == "" {
 		port = "7540"
 	}
 	address := fmt.Sprintf(":%s", port)
 
-	err = database.Init(dbPath)
-	if err != nil {
-		panic(err)
+	if initErr := database.Init(dbPath); initErr != nil {
+		panic(initErr)
 	}
 
 	http.Handle("/", http.FileServer(http.Dir(webPath)))
