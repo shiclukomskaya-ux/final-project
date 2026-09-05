@@ -11,20 +11,23 @@ const dateFormat = "20060102"
 
 func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	if repeat == "" {
-		return "", fmt.Errorf("Пустая строка")
+		return "", fmt.Errorf("Правило повторения не указано")
 	}
 
 	t, err := time.Parse(dateFormat, dstart)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Некорректная начальная дата: %w", err)
 	}
 
 	parts := strings.Split(repeat, " ")
+	if len(parts) == 0 {
+		return "", fmt.Errorf("Неверный формат правила")
+	}
 	switch parts[0] {
 	case "y":
 		for {
 			t = t.AddDate(1, 0, 0)
-			if t.After(now) {
+			if afterNow(t, now) {
 				break
 			}
 		}
@@ -36,19 +39,21 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 		}
 		days, err := strconv.Atoi(parts[1])
 		if err != nil {
-			return "", fmt.Errorf("Некорректный интервал")
+			return "", fmt.Errorf("Некорректный интервал: %w", err)
 		}
 		if days <= 0 || days > 400 {
-			return "", fmt.Errorf("Превышен допустимы интервал")
+			return "", fmt.Errorf("Интервал должен быть от 1 до 400 дней")
 		}
 		for {
 			t = t.AddDate(0, 0, days)
-			if t.After(now) {
+			if afterNow(t, now) {
 				break
 			}
 		}
 		return t.Format(dateFormat), nil
-	default:
-		return "", fmt.Errorf("Неподдерживаемый формат")
 	}
+	return "", fmt.Errorf("Неподдерживаемый формат")
+}
+func afterNow(date, now time.Time) bool {
+	return date.After(now)
 }

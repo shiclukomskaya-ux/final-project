@@ -1,6 +1,7 @@
 package main
 
 import (
+	"final-project/internal/api"
 	"final-project/internal/database"
 	"fmt"
 	"net/http"
@@ -28,5 +29,6 @@ func main() {
 	}
 
 	http.Handle("/", http.FileServer(http.Dir(webPath)))
+	api.Init()
 	http.ListenAndServe(address, nil)
 }
