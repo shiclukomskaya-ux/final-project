@@ -27,7 +27,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	case "y":
 		for {
 			t = t.AddDate(1, 0, 0)
-			if afterNow(t, now) {
+			if AfterNow(t, now) {
 				break
 			}
 		}
@@ -46,7 +46,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 		}
 		for {
 			t = t.AddDate(0, 0, days)
-			if afterNow(t, now) {
+			if AfterNow(t, now) {
 				break
 			}
 		}
@@ -54,6 +54,6 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	}
 	return "", fmt.Errorf("Неподдерживаемый формат")
 }
-func afterNow(date, now time.Time) bool {
+func AfterNow(date, now time.Time) bool {
 	return date.After(now)
 }
