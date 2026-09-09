@@ -28,33 +28,10 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	now := time.Now()
-
-	if task.Date == "" {
-		task.Date = now.Format("20060102")
-	}
-
-	t, err := time.Parse("20060102", task.Date)
+	err = checkDate(&task)
 	if err != nil {
-		writeJson(w, map[string]string{"error": "Некорректный формат даты"})
+		writeJson(w, map[string]string{"error": "Некорректный формат даты или правила повторения"})
 		return
-	}
-
-	var next string
-	if task.Repeat != "" {
-		next, err = planner.NextDate(now, task.Date, task.Repeat)
-		if err != nil {
-			writeJson(w, map[string]string{"error": "Некорректный формат повторения"})
-			return
-		}
-	}
-
-	if planner.AfterNow(now, t) {
-		if len(task.Repeat) == 0 {
-			task.Date = now.Format("20060102")
-		} else {
-			task.Date = next
-		}
 	}
 
 	id, err := database.AddTask(&task)
@@ -63,4 +40,41 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJson(w, map[string]string{"id": strconv.FormatInt(id, 10)})
+}
+func checkDate(task *database.Task) error {
+	now := time.Now()
+	todayStr := now.Format("20060102")
+
+	now, _ = time.Parse("20060102", todayStr)
+	
+	if task.Date == "" {
+		task.Date = todayStr
+	}
+
+	t, err := time.Parse("20060102", task.Date)
+	if err != nil {
+		return err
+	}
+
+	if planner.AfterNow(now, t) {
+		if task.Repeat == "" {
+			task.Date = todayStr
+		} else {
+			next, err := planner.NextDate(now, todayStr, task.Repeat)
+			if err != nil {
+				return err
+			}
+			task.Date = next
+		}
+		return nil
+	}
+
+	if task.Repeat != "" {
+		_, err := planner.NextDate(now, task.Date, task.Repeat)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
