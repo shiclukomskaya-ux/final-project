@@ -17,3 +17,19 @@ func AddTask(task *Task) (int64, error) {
 	}
 	return id, err
 }
+func Tasks(limit int) ([]*Task, error) {
+	var tasks []*Task
+
+	rows, err := DB.Query("SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT ?", limit)
+
+	if err != nil {
+		return tasks, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var task Task
+		rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
+		tasks = append(tasks, &task)
+	}
+	return tasks, nil
+}
