@@ -23,3 +23,13 @@ func TasksHandler(w http.ResponseWriter, r *http.Request) {
 		Tasks: tasks,
 	})
 }
+func GetTask(id string) (*Task, error) {
+
+	var task Task
+	err := DB.QueryRow("SELECT id, date, title, comment, repeat FROM scheduler WHERE id = ?", id).Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
+	if err != nil {
+		return nil, err
+	}
+	return &task, nil
+
+}

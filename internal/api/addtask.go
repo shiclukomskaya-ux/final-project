@@ -46,7 +46,7 @@ func checkDate(task *database.Task) error {
 	todayStr := now.Format("20060102")
 
 	now, _ = time.Parse("20060102", todayStr)
-	
+
 	if task.Date == "" {
 		task.Date = todayStr
 	}

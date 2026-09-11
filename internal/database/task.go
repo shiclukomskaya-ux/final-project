@@ -33,3 +33,6 @@ func Tasks(limit int) ([]*Task, error) {
 	}
 	return tasks, nil
 }
+func UpdateTask(task *Task) error {
+	query := 
+}
