@@ -9,27 +9,14 @@ import (
 )
 
 func Init() {
-	http.HandleFunc("/api/nextdate", NextDayHandler)
-	http.HandleFunc("/api/task", taskHandler)
-	http.HandleFunc("/api/tasks", TasksHandler)
-	http.HandleFunc("/api/task/done", taskDoneHandler)
-}
+	http.HandleFunc("GET /api/nextdate", NextDayHandler)
+	http.HandleFunc("GET /api/tasks", TasksHandler)
+	http.HandleFunc("POST /api/task/done", taskDoneHandler)
 
-func taskHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-
-	case http.MethodGet:
-		getTaskHandler(w, r)
-
-	case http.MethodPut:
-		updateTaskHandler(w, r)
-
-	case http.MethodDelete:
-		deleteTaskHandler(w, r)
-
-	case http.MethodPost:
-		addTaskHandler(w, r)
-	}
+	http.HandleFunc("GET /api/task", getTaskHandler)
+	http.HandleFunc("POST /api/task", addTaskHandler)
+	http.HandleFunc("PUT /api/task", updateTaskHandler)
+	http.HandleFunc("DELETE /api/task", deleteTaskHandler)
 }
 func getTaskHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")

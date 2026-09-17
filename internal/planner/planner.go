@@ -55,5 +55,5 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	return "", fmt.Errorf("Неподдерживаемый формат")
 }
 func AfterNow(date, now time.Time) bool {
-	return date.After(now)
+	return date.Format(dateFormat) > now.Format(dateFormat)
 }

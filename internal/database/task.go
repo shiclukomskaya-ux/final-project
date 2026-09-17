@@ -20,7 +20,7 @@ func AddTask(task *Task) (int64, error) {
 	return id, err
 }
 func Tasks(limit int) ([]*Task, error) {
-	var tasks []*Task
+	tasks := make([]*Task, 0)
 
 	rows, err := DB.Query("SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT ?", limit)
 
