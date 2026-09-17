@@ -18,6 +18,14 @@ func main() {
 	webPath := filepath.Join(rootPath, "web")
 	dbPath := filepath.Join(rootPath, "scheduler.db")
 
+	if _, err := os.Stat(webPath); os.IsNotExist(err) {
+		webPath = "web"
+	}
+
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		dbPath = "scheduler.db"
+	}
+
 	port := os.Getenv("TODO_PORT")
 	if port == "" {
 		port = "7540"
