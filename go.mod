@@ -1,6 +1,6 @@
 module final-project
 
-go 1.26.1
+go 1.25.0
 
 require (
 	github.com/jmoiron/sqlx v1.4.0
