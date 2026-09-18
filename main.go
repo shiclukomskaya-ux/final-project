@@ -1,12 +1,13 @@
 package main
 
 import (
-	"final-project/internal/api"
-	"final-project/internal/database"
 	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"final-project/internal/api"
+	"final-project/internal/database"
 )
 
 func main() {
@@ -14,16 +15,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	rootPath := filepath.Dir(execPath)
 	webPath := filepath.Join(rootPath, "web")
-	dbPath := filepath.Join(rootPath, "scheduler.db")
-
 	if _, err := os.Stat(webPath); os.IsNotExist(err) {
 		webPath = "web"
 	}
 
-	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-		dbPath = "scheduler.db"
+	dbPath := os.Getenv("TODO_DBFILE")
+	if dbPath == "" {
+		dbPath = filepath.Join(rootPath, "scheduler.db")
+		if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+			dbPath = "scheduler.db"
+		}
 	}
 
 	port := os.Getenv("TODO_PORT")
@@ -39,5 +43,5 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir(webPath)))
 	api.Init()
 	http.ListenAndServe(address, nil)
-
+	database.Close()
 }

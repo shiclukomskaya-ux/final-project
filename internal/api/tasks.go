@@ -1,25 +1,28 @@
 package api
 
 import (
-	"final-project/internal/database"
 	"net/http"
+
+	"final-project/internal/database"
 )
+
+const taskLimit = 50
 
 type TasksResp struct {
 	Tasks []*database.Task `json:"tasks"`
 }
 
 func TasksHandler(w http.ResponseWriter, r *http.Request) {
-	tasks, err := database.Tasks(50)
+	tasks, err := database.Tasks(taskLimit)
 	if err != nil {
-		writeJson(w, map[string]string{"error": "Не удалось получить список задач"})
+		writeJson(w, http.StatusBadRequest, map[string]string{"error": "Не удалось получить список задач"})
 		return
 	}
 	if tasks == nil {
 		tasks = make([]*database.Task, 0)
 	}
 
-	writeJson(w, TasksResp{
+	writeJson(w, http.StatusOK, TasksResp{
 		Tasks: tasks,
 	})
 }

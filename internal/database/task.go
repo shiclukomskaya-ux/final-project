@@ -30,7 +30,9 @@ func Tasks(limit int) ([]*Task, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var task Task
-		rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
+		if err := rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat); err != nil {
+			return tasks, err
+		}
 		tasks = append(tasks, &task)
 	}
 	return tasks, nil

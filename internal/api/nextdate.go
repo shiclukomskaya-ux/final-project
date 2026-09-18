@@ -1,9 +1,10 @@
 package api
 
 import (
-	"final-project/internal/planner"
 	"net/http"
 	"time"
+
+	"final-project/internal/planner"
 )
 
 const dateFormat = "20060102"
